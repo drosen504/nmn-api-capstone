@@ -63,7 +63,7 @@ const getArtist = function (name) {
 // =========================================================================================================
 const login = function () {
   const AUTH_REQUEST_URL = 'https://accounts.spotify.com/authorize';
-  const REDIRECT_URI = 'http://localhost:8888'; 
+  const REDIRECT_URI = 'http://localhost:8888/auth'; 
 
   const query = new URLSearchParams();
   query.set('client_id', CLIENT_ID);
