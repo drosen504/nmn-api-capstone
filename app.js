@@ -3,9 +3,6 @@
 const CLIENT_ID = '5f795f8bb8c14d94bafa6dcd2ed3038b';
 
 const getFromApi = function (endpoint, query = {}) {
-  // You won't need to change anything in this function, but you will use this function 
-  // to make calls to Spotify's different API endpoints. Pay close attention to this 
-  // function's two parameters.
 
   const url = new URL(`https://api.spotify.com/v1/${endpoint}`);
   const headers = new Headers();
@@ -30,37 +27,33 @@ let artist;
 const getArtist = function (name) {
   return getFromApi('search', {
     q: name,
-    limit: 1,
-    type: 'artist'
+    type: 'artist',
+    limit: 1
   })
     .then(data => {
       artist = data.artists.items[0];
       return getFromApi(`artists/${artist.id}/related-artists`);
     })
-    .then(item => {
-      artist.related = item.artists;
-      let promises = [];
-      for (let i=0; i < artist.related.length; i++) {
-        promises.push(getFromApi(`artists/${artist.related[i].id}/top-tracks`, { country: 'US' }));
-        return artist; 
-      } 
+    .then(data => {
+      artist.related = data.artists;
+      const promises = [];
+      artist.related.forEach(relatedArtist => {
+        const { id } = relatedArtist;
+        promises.push(getFromApi(`artists/${id}/top-tracks`, { country: 'US' }));
+      });
       return Promise.all(promises);
-    })    
-    .then()
-        
-   
-
-    .catch(error => console.log(error));
+    })
+    .then(artistTracks => {
+      artistTracks.forEach((artistTrack, index) => {
+        artist.related[index].tracks = artistTrack.tracks;
+      });
+      return artist;
+    })
+    .catch(console.log);
 };
 
 
 
-
-
-// =========================================================================================================
-// IGNORE BELOW THIS LINE - THIS IS RELATED TO SPOTIFY AUTHENTICATION AND IS NOT NECESSARY  
-// TO REVIEW FOR THIS EXERCISE
-// =========================================================================================================
 const login = function () {
   const AUTH_REQUEST_URL = 'https://accounts.spotify.com/authorize';
   const REDIRECT_URI = 'http://localhost:8888/auth'; 
