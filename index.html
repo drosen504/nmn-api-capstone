@@ -63,7 +63,7 @@ Spotify.prototype.onSearchSubmitted = function(event) {
 };
 
 Spotify.prototype.search = function(name) {
-  console.log('spotify.prototype.search ran');  
+    console.log(localStorage); 
   getArtist(name).then(this.onSearchDone.bind(this));
 };
 

@@ -11,6 +11,7 @@ const getFromApi = function (endpoint, query = {}) {
   const requestObject = {
     headers
   };
+  console.log(url);
 
   Object.keys(query).forEach(key => url.searchParams.append(key, query[key]));
   return fetch(url, requestObject).then(function (response) {
